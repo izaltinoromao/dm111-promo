@@ -27,8 +27,8 @@ public class PubSubConfig {
         return ProjectSubscriptionName.of(projectId, subscriptionName);
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
+//    @Bean
+//    public ObjectMapper objectMapper() {
+//        return new ObjectMapper();
+//    }
 }
