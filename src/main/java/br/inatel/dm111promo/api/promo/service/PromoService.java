@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,15 +20,15 @@ import java.util.stream.Collectors;
 @Service
 public class PromoService {
 
-    private final PromoRepository repository;
+    private final PromoRepository promoRepository;
 
-    public PromoService(PromoRepository repository) {
-        this.repository = repository;
+    public PromoService(PromoRepository promoRepository) {
+        this.promoRepository = promoRepository;
     }
 
     public PromoDto createPromo(PromoRequest request) throws ParseException {
         var promo = buildPromo(request);
-        repository.save(promo);
+        promoRepository.save(promo);
         return buildPromoDto(promo);
     }
 
@@ -51,14 +50,14 @@ public class PromoService {
         promo.setExpiration(promoRequest.getExpiration());
         promo.setProducts(promoRequest.getProducts());
 
-        repository.update(promo);
+        promoRepository.update(promo);
 
         return buildPromoDto(promo);
     }
 
     public void removePromo(String id) throws ApiException {
         try {
-            repository.delete(id);
+            promoRepository.delete(id);
         } catch (ExecutionException | InterruptedException e) {
             throw new ApiException(AppErrorCode.PROMO_QUERY_ERROR);
         }
@@ -66,7 +65,7 @@ public class PromoService {
 
     private Promo retrievePromo(String id) throws ApiException {
         try {
-            return repository.findById(id)
+            return promoRepository.findById(id)
                     .orElseThrow(() -> new ApiException(AppErrorCode.PROMO_NOT_FOUND));
         } catch (ExecutionException | InterruptedException e) {
             throw new ApiException(AppErrorCode.PROMO_QUERY_ERROR);
@@ -75,7 +74,7 @@ public class PromoService {
 
     private List<Promo> retrieveAllPromos() throws ApiException {
         try {
-            return repository.findAll();
+            return promoRepository.findAll();
         } catch (ExecutionException | InterruptedException e) {
             throw new ApiException(AppErrorCode.PROMO_QUERY_ERROR);
         }

@@ -86,6 +86,10 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        if (uri.startsWith("/promo/users")) {
+            return true;
+        }
+
         return true;
     }
 
@@ -120,6 +124,11 @@ public class AuthInterceptor implements HandlerInterceptor {
                         tokenPayload.method().equals(HttpMethod.DELETE.name()))
                     if (!user.getRole().equals("ADMIN")) {
                         throw new ApiException(AppErrorCode.PROMO_OPERATION_NOT_ALLOWED);
+                    }
+            } else if (tokenPayload.uri().startsWith("/dm111/promo/user")) {
+                if (tokenPayload.method().equals(HttpMethod.GET.name()))
+                    if (!user.getRole().equals("CLIENT")) {
+                        throw new ApiException(AppErrorCode.PROMO_BY_USER_OPERATION_NOT_ALLOWED);
                     }
             } else {
                 if (tokenPayload.uri().contains("/supermarketlist")) {

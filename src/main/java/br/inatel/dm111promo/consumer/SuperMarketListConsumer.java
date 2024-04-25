@@ -1,5 +1,7 @@
 package br.inatel.dm111promo.consumer;
 
+import br.inatel.dm111promo.api.core.ApiException;
+import br.inatel.dm111promo.api.promobyuser.service.PromoByUserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.pubsub.v1.AckReplyConsumer;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class SuperMarketListConsumer {
@@ -21,10 +24,12 @@ public class SuperMarketListConsumer {
 
     private final ObjectMapper objectMapper;
     private final ProjectSubscriptionName subscriptionName;
+    private final PromoByUserService promoByUserService;
 
-    public SuperMarketListConsumer(ObjectMapper objectMapper, ProjectSubscriptionName subscriptionName) {
+    public SuperMarketListConsumer(ObjectMapper objectMapper, ProjectSubscriptionName subscriptionName, PromoByUserService promoByUserService) {
         this.objectMapper = objectMapper;
         this.subscriptionName = subscriptionName;
+        this.promoByUserService = promoByUserService;
     }
 
     @PostConstruct
@@ -38,6 +43,7 @@ public class SuperMarketListConsumer {
                 log.info("Converted Event: {}", event);
                 if (Operation.ENTITY_ADDED == event.operation()) {
                     log.info("Entity added... {}", event.data());
+                    promoByUserService.updatePromoByUserEntity(event.data().userId());
                 } else if (Operation.ENTITY_UPDATED == event.operation()) {
                     log.info("Entity updated... {}", event.data());
                 } else {
@@ -45,6 +51,8 @@ public class SuperMarketListConsumer {
                 }
             } catch (JsonProcessingException e) {
                 log.error("Failure to process the supermarket list event.", e);
+            } catch (ExecutionException | InterruptedException | ApiException e) {
+                throw new RuntimeException(e);
             }
             log.info("Received message: {} with attrs: {}", messageId, messageString);
             consumer.ack();

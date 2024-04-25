@@ -11,6 +11,7 @@ public enum AppErrorCode {
     USERS_QUERY_ERROR("query.user.error", "The user query is not working. Please try again!", HttpStatus.INTERNAL_SERVER_ERROR),
     PRODUCTS_OPERATION_NOT_ALLOWED("entity.products.operation-not-allowed", "The operation is not allowed.", HttpStatus.FORBIDDEN),
     PROMO_OPERATION_NOT_ALLOWED("entity.promo.operation-not-allowed", "The operation is not allowed.", HttpStatus.FORBIDDEN),
+    PROMO_BY_USER_OPERATION_NOT_ALLOWED("entity.promoByUser.operation-not-allowed", "The operation is not allowed.", HttpStatus.FORBIDDEN),
     SUPERMARKET_LIST_OPERATION_NOT_ALLOWED("entity.supermarket-list.operation-not-allowed", "The operation is not allowed.", HttpStatus.FORBIDDEN),
     PROMO_INVALID("entity.promo.invalid", "The promo is invalid.", HttpStatus.BAD_REQUEST);
 
